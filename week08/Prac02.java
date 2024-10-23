@@ -54,7 +54,7 @@ public class Prac02 {
     //public, default, protected allows access to subclass
 
     //method already defined
-    //super-sub; method overriding (different classes, same signature, access level not wider)
+    //super-sub; method overriding (different classes, same signature, access level can only be changed to wider)
     //@Override annotation
     //polymorphism; different functionality = which new Object, uses override
     //inheritance base class ref = other derived class objects
