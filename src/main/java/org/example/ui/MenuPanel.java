@@ -10,6 +10,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import org.example.ui.theme.TwoButton;
+import org.example.ui.theme.TwoCategoryLabel;
+import org.example.ui.theme.TwoLabel;
+import org.example.ui.theme.TwoPanel;
 
 public class MenuPanel {
     private JPanel menuPanel, itemListPanel, orderPanel, totalPanel;
@@ -59,13 +63,14 @@ public class MenuPanel {
 
         orderPanel = new JPanel();
         orderPanel.setLayout(new BoxLayout(orderPanel, BoxLayout.Y_AXIS));
+        orderPanel.setBackground(Color.GRAY);
         JScrollPane scrollPane = new JScrollPane(orderPanel);
         scrollPane.setPreferredSize(new Dimension(580, 200));
 
         // 총 금액 및 결제 버튼
         totalPanel = new JPanel(new BorderLayout());
-        totalLabel = new JLabel("Total Price: ");
-        JButton payButton = new JButton("Payment");
+        totalLabel = new TwoLabel("Total Price: ");
+        TwoButton payButton = new TwoButton("Payment");
         payButton.addActionListener(e -> new PaymentDialog(kioskManager.getFrame(), orderManager, kioskManager));
 
         totalPanel.add(totalLabel, BorderLayout.WEST);
@@ -82,11 +87,8 @@ public class MenuPanel {
 
     // 카테고리 레이블 생성 및 클릭 시 아이템 업데이트
     private JLabel createCategoryLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.BOLD, 18));
-        label.setForeground(Color.WHITE);
+        TwoCategoryLabel label = new TwoCategoryLabel(text);
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -149,12 +151,13 @@ public class MenuPanel {
         // 아이템 패널 설정
         for (MenuItem item : items) {
             JPanel itemPanel = new JPanel(new BorderLayout());
-            itemPanel.setBackground(Color.WHITE);
+            itemPanel.setBackground(Color.DARK_GRAY);
 
             JLabel imageLabel = new JLabel(new ImageIcon(new ImageIcon(getClass().getClassLoader().getResource(item.getImagePath()))
                     .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
             JLabel nameLabel = new JLabel(item.getName(), SwingConstants.CENTER);
-            JLabel priceLabel = new JLabel(item.getPrice() + "원", SwingConstants.CENTER);
+            TwoLabel priceLabel = new TwoLabel(item.getPrice() + " won");
+            priceLabel.setAlignmentX(SwingConstants.CENTER);
 
             JPanel textPanel = new JPanel();
             textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
@@ -173,10 +176,8 @@ public class MenuPanel {
                     new OrderDialog(kioskManager.getFrame(), item, MenuPanel.this);
                 }
             });
-
             itemListPanel.add(itemPanel);
         }
-
         itemListPanel.revalidate();
         itemListPanel.repaint();
     }
@@ -185,12 +186,15 @@ public class MenuPanel {
     public void addOrder(Order order) {
         orderManager.addOrder(order);
 
-        JPanel singleOrderPanel = new JPanel();
+        TwoPanel singleOrderPanel = new TwoPanel();
         singleOrderPanel.setLayout(new BoxLayout(singleOrderPanel, BoxLayout.X_AXIS));
         singleOrderPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel orderLabel = new JLabel(order.getMenuItem().getName() + "    ");
-        orderLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        Dimension fixedSize = new Dimension(585, 25);
+        singleOrderPanel.setPreferredSize(fixedSize);
+        singleOrderPanel.setMaximumSize(fixedSize);
+        singleOrderPanel.setMinimumSize(fixedSize);
+        TwoLabel orderLabel = new TwoLabel(order.getMenuItem().getName() + "    ");
 
         JButton minusButton = new JButton("-");
         styleButton(minusButton);
@@ -201,8 +205,7 @@ public class MenuPanel {
         JButton plusButton = new JButton("+");
         styleButton(plusButton);
 
-        JLabel priceLabel = new JLabel(order.getTotalPrice() + "원 ");
-        priceLabel.setFont(new Font("Malgun Gothic", Font.PLAIN, 16));
+        TwoLabel priceLabel = new TwoLabel(order.getTotalPrice() + " Won ");
 
         JButton deleteButton = new JButton("x");
         styleButton(deleteButton);
@@ -212,7 +215,7 @@ public class MenuPanel {
             if (order.getQuantity() > 1) {
                 order.decreaseQuantity();
                 quantityLabel.setText(String.valueOf(order.getQuantity()));
-                priceLabel.setText(order.getTotalPrice() + "원 ");
+                priceLabel.setText(order.getTotalPrice() + " Won ");
                 updateTotal();
             }
         });
@@ -221,7 +224,7 @@ public class MenuPanel {
         plusButton.addActionListener(e -> {
             order.increaseQuantity();
             quantityLabel.setText(String.valueOf(order.getQuantity()));
-            priceLabel.setText(order.getTotalPrice() + "원 ");
+            priceLabel.setText(order.getTotalPrice() + " Won ");
             updateTotal();
         });
 
@@ -256,7 +259,7 @@ public class MenuPanel {
 
     private void updateTotal() {
         int total = orderManager.calculateTotal();
-        totalLabel.setText("Total Price: " + total + "원");
+        totalLabel.setText("Total Price: " + total + " ₩");
     }
 
     public JPanel getPanel() {

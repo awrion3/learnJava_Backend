@@ -6,7 +6,7 @@ public class KioskManager {
     private JFrame frame;
 
     public KioskManager() {
-        frame = new JFrame("투썸 카페 키오스크");
+        frame = new JFrame("A TWOSOME PLACE Cafe Kiosk");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 800);
 

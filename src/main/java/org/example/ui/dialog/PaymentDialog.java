@@ -6,6 +6,8 @@ import org.example.ui.KioskManager;
 
 import javax.swing.*;
 import java.awt.*;
+import org.example.ui.theme.TwoButton;
+import org.example.ui.theme.TwoLabel;
 
 public class PaymentDialog extends JDialog {
     public PaymentDialog(JFrame parent, OrderManager orderManager, KioskManager kioskManager) {
@@ -13,8 +15,8 @@ public class PaymentDialog extends JDialog {
         setLayout(new BorderLayout());
 
         // 영수증 타이틀
-        JLabel receiptTitle = new JLabel("Receipt", SwingConstants.CENTER);
-        receiptTitle.setFont(new Font("Arial", Font.BOLD, 20));
+        TwoLabel receiptTitle = new TwoLabel("Receipt");
+        receiptTitle.setHorizontalAlignment(SwingConstants.CENTER);
         add(receiptTitle, BorderLayout.NORTH);
 
         // 주문 내역 표시 패널 (스크롤)
@@ -25,10 +27,9 @@ public class PaymentDialog extends JDialog {
         // 각 주문 항목 표시
         for (Order order : orderManager.getOrders()) {
             JPanel itemPanel = new JPanel(new BorderLayout());
-            JLabel itemLabel = new JLabel(order.getMenuItem().getName() + " x " + order.getQuantity());
-            JLabel priceLabel = new JLabel(order.getTotalPrice() + "원", SwingConstants.RIGHT);
-            itemLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-            priceLabel.setFont(new Font("Malgun Gothic", Font.PLAIN, 14));
+            TwoLabel itemLabel = new TwoLabel(order.getMenuItem().getName() + " x " + order.getQuantity());
+            TwoLabel priceLabel = new TwoLabel(order.getTotalPrice() + " Won");
+            priceLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
             itemPanel.add(itemLabel, BorderLayout.WEST);
             itemPanel.add(priceLabel, BorderLayout.EAST);
@@ -39,14 +40,13 @@ public class PaymentDialog extends JDialog {
         scrollPane.setPreferredSize(new Dimension(280, 150));
         add(scrollPane, BorderLayout.CENTER);
 
-
         JPanel totalPanel = new JPanel(new BorderLayout());
-        JLabel totalLabel = new JLabel("Total: " + orderManager.calculateTotal() + "원", SwingConstants.RIGHT);
-        totalLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 16));
+        TwoLabel totalLabel = new TwoLabel("Total: " + orderManager.calculateTotal() + " ₩");
+        totalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         totalPanel.add(totalLabel, BorderLayout.CENTER);
 
         // 결제 완료 후 메인 화면(초기 화면)으로 돌아가고 주문 내역은 초기화
-        JButton closeButton = new JButton("Close");
+        TwoButton closeButton = new TwoButton("Close");
         closeButton.addActionListener(e -> {
             orderManager.clearOrders(); // 주문 내역 초기화
             kioskManager.showMainPanel(); // 메인 패널로 돌아가기
