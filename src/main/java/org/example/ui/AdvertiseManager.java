@@ -12,7 +12,7 @@ public class AdvertiseManager {
         LocalDateTime today = LocalDateTime.now();
         Month thisMonth = today.getMonth();
 
-        String eventName = "images/advertise/event00.jpg";
+        String eventName = "images/util/logo.png";
 
         if (thisMonth == Month.JANUARY){
             eventName = "images/advertise/event01.jpg";
