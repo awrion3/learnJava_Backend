@@ -16,6 +16,7 @@ public class KioskManager {
 
     public void showMainPanel() {
         MainPanel mainPanel = new MainPanel(this);
+        frame.setLocationRelativeTo(null);
         frame.setContentPane(mainPanel.getPanel());
         frame.revalidate();
         frame.repaint();

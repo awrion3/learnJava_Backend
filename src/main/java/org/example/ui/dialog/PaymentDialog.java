@@ -2,6 +2,7 @@ package org.example.ui.dialog;
 
 import org.example.model.Order;
 import org.example.model.OrderManager;
+import org.example.ui.AdvertiseManager;
 import org.example.ui.KioskManager;
 import org.example.ui.theme.TwoButton;
 
@@ -64,6 +65,11 @@ public class PaymentDialog extends JDialog {
 
         // 헤더, 주문 내역, 총액 정보 조합하여 표시
         String receiptText = headerInfo.toString() + orderDetails.toString() + footerInfo.toString();
+
+        String monthEvent = AdvertiseManager.getMonthAdvertisement();
+        JLabel advertiseLabel = new JLabel(new ImageIcon(new ImageIcon(getClass().getClassLoader().getResource(monthEvent))
+                .getImage().getScaledInstance(450, 200, Image.SCALE_SMOOTH)));
+        add(advertiseLabel, BorderLayout.NORTH);
 
         // 영수증 텍스트 영역 설정
         JTextArea receiptTextArea = new JTextArea(receiptText);
