@@ -1,102 +1,141 @@
 package org.example.ui.dialog;
 
-import org.example.model.Order;
 import org.example.model.OrderManager;
-import org.example.ui.AdvertiseManager;
 import org.example.ui.KioskManager;
 import org.example.ui.theme.TwoButton;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PaymentDialog extends JDialog {
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private JLabel cardLogoLabel;
 
     public PaymentDialog(JFrame parent, OrderManager orderManager, KioskManager kioskManager) {
-        super(parent, "Receipt", true);
+        super(parent, "Payment Confirmation", true);
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
+        getContentPane().setBackground(Color.WHITE);
 
-        // 헤더 정보 설정
-        StringBuilder headerInfo = new StringBuilder();
-        headerInfo.append("\t\t\tRECEIPT\n")
-                .append("[Store Name] A Twosome Place\n")
-                .append("[Address] 123 Gwangjin-gu, Seoul\n")
-                .append("[Phone] 02-123-4567\n")
-                .append("[Date] ").append(dateFormat.format(Calendar.getInstance().getTime()))
-                .append("\n")
-                .append("========================================================\n")
-                .append("   Item                   Unit Price   Qty       Amount\n")
-                .append("--------------------------------------------------------\n");
+        // 상단 로고 패널
+        JPanel logoPanel = new JPanel();
+        logoPanel.setBackground(Color.WHITE);
+        JLabel logoLabel = new JLabel(new ImageIcon(new ImageIcon(getClass().getClassLoader().getResource("images/util/logo4.jpg"))
+                .getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+        logoPanel.add(logoLabel);
+        add(logoPanel, BorderLayout.NORTH);
 
-        // 주문 내역
-        StringBuilder orderDetails = new StringBuilder();
-        int totalAmount = 0;
+        // 컨텐츠 패널 주위에 패딩을 추가하는 외부 패널
+        JPanel outerPanel = new JPanel();
+        outerPanel.setLayout(new BorderLayout());
+        outerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        outerPanel.setBackground(Color.WHITE);
 
-        for (Order order : orderManager.getOrders()) {
-            String itemName = order.getMenuItem().getName();
-            int unitPrice = order.getMenuItem().getPrice();
-            int quantity = order.getQuantity();
-            int amount = order.getTotalPrice();
+        // 검은색 테두리가 있는 메인 컨텐츠 패널
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            totalAmount += amount;
+        // 결제 금액 레이블
+        JLabel amountLabel = new JLabel("Payment Amount: " + orderManager.calculateTotal() + " ₩");
+        amountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(Box.createVerticalStrut(10)); // 상단에 약간의 패딩 추가
+        contentPanel.add(amountLabel);
+        contentPanel.add(Box.createVerticalStrut(20)); // 금액 레이블 아래에 여백 추가
 
-            // 각 주문 항목을 정렬된 열로 추가
-            orderDetails.append(String.format(" %-20s %12d %6d %12d\n", itemName, unitPrice, quantity, amount));
-        }
+        // 카드 선택과 로고를 위한 패널 생성
+        JPanel cardPanel = new JPanel();
+        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+        cardPanel.setBackground(Color.WHITE);
+        cardPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // 총액과 부가세 계산 및 표시
-        int vat = (int) (totalAmount * 0.1);
-        int subtotal = totalAmount - vat;
+        // 카드사 선택 패널
+        JPanel cardSelectionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)); // 수직 간격 감소
+        cardSelectionPanel.setBackground(Color.WHITE);
+        JLabel selectCardLabel = new JLabel("Select Card Issuer:");
+        String[] cardIssuers = {"BC Card", "Hyundai Card", "KB Card", "Shinhan Card", "Samsung Pay"};
+        JComboBox<String> cardIssuerComboBox = new JComboBox<>(cardIssuers);
 
-        // "Amount" 열에 맞춰진 총액 정보 추가
-        StringBuilder footerInfo = new StringBuilder();
-        footerInfo.append("--------------------------------------------------------\n")
-                .append(String.format(" Subtotal:%31s %12d\n", "", subtotal))
-                .append(String.format(" VAT:%36s %12d\n", "", vat))
-                .append("--------------------------------------------------------\n")
-                .append(String.format(" Total Amount:%27s %12d\n", "", totalAmount))
-                .append("========================================================\n")
-                .append("Payment Method: Cash\n")
-                .append("Authorization No: 12345678\n")
-                .append("Payment Date: ").append(dateFormat.format(Calendar.getInstance().getTime()));
+        cardSelectionPanel.add(selectCardLabel);
+        cardSelectionPanel.add(cardIssuerComboBox);
+        cardPanel.add(cardSelectionPanel);
 
-        // 헤더, 주문 내역, 총액 정보 조합하여 표시
-        String receiptText = headerInfo.toString() + orderDetails.toString() + footerInfo.toString();
+        // 콤보 박스와 로고 사이 최소 간격 추가
+        cardPanel.add(Box.createVerticalStrut(5));
 
-        String monthEvent = AdvertiseManager.getMonthAdvertisement();
-        JLabel advertiseLabel = new JLabel(new ImageIcon(new ImageIcon(getClass().getClassLoader().getResource(monthEvent))
-                .getImage().getScaledInstance(450, 200, Image.SCALE_SMOOTH)));
-        add(advertiseLabel, BorderLayout.NORTH);
+        // 카드 로고 표시 레이블
+        cardLogoLabel = new JLabel();
+        cardLogoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        cardLogoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel logoContainerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0)); // 추가 패딩 없음
+        logoContainerPanel.setBackground(Color.WHITE);
+        logoContainerPanel.add(cardLogoLabel);
+        cardPanel.add(logoContainerPanel);
 
-        // 영수증 텍스트 영역 설정
-        JTextArea receiptTextArea = new JTextArea(receiptText);
-        receiptTextArea.setFont(new Font("Monospaced", Font.BOLD, 13));
-        receiptTextArea.setEditable(false);
-        receiptTextArea.setBackground(Color.WHITE);
-        receiptTextArea.setLineWrap(true);
-        receiptTextArea.setWrapStyleWord(true);
+        // 카드 패널을 컨텐츠 패널에 추가
+        contentPanel.add(cardPanel);
+        contentPanel.add(Box.createVerticalStrut(20)); // 카드 패널 아래에 여백 추가
 
-        JScrollPane scrollPane = new JScrollPane(receiptTextArea);
-        scrollPane.setPreferredSize(new Dimension(535, 500));
-        add(scrollPane, BorderLayout.CENTER);
+        // 초기 로고 표시
+        updateCardLogo((String) cardIssuerComboBox.getSelectedItem());
 
-        // 닫기 버튼 설정
+        // 카드사가 변경될 때 로고 업데이트
+        cardIssuerComboBox.addActionListener(e -> updateCardLogo((String) cardIssuerComboBox.getSelectedItem()));
+
+        outerPanel.add(contentPanel, BorderLayout.CENTER);
+        add(outerPanel, BorderLayout.CENTER);
+
+        // 버튼 패널
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
-        TwoButton closeButton = new TwoButton("Close");
-        closeButton.addActionListener(e -> {
-            orderManager.clearOrders(); // 주문 내역 초기화
-            kioskManager.showMainPanel(); // 메인 패널로 돌아가기
-            dispose(); // 다이얼로그 닫기
+
+        TwoButton confirmButton = new TwoButton("Confirm Payment");
+        confirmButton.addActionListener(e -> {
+            if (cardIssuerComboBox.getSelectedItem() == null) {
+                JOptionPane.showMessageDialog(this, "Please select a card issuer.", "Selection Required", JOptionPane.WARNING_MESSAGE);
+            } else {
+                String selectedCardIssuer = (String) cardIssuerComboBox.getSelectedItem(); // 선택한 카드사 저장
+                dispose();
+                new ReceiptDialog(parent, orderManager, kioskManager, selectedCardIssuer); // 선택한 카드사 전달
+            }
         });
+
+        TwoButton closeButton = new TwoButton("Close");
+        closeButton.addActionListener(e -> dispose());
+
+        buttonPanel.add(confirmButton);
         buttonPanel.add(closeButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        setSize(500, 620);
+        // 다이얼로그 크기 및 위치 조정
+        setSize(500, 350);
         setLocationRelativeTo(parent);
         setVisible(true);
+    }
+
+    private Map<String, String> getCardLogos() {
+        Map<String, String> logos = new HashMap<>();
+        logos.put("BC Card", "images/cards/bc.png");
+        logos.put("Hyundai Card", "images/cards/hd.png");
+        logos.put("KB Card", "images/cards/kb.jpg");
+        logos.put("Shinhan Card", "images/cards/sh.png");
+        logos.put("Samsung Pay", "images/cards/samsung.png");
+        return logos;
+    }
+
+    private void updateCardLogo(String cardIssuer) {
+        Map<String, String> cardLogos = getCardLogos();
+        String logoPath = cardLogos.getOrDefault(cardIssuer, null);
+
+        if (logoPath != null) {
+            ImageIcon logoIcon = new ImageIcon(new ImageIcon(getClass().getClassLoader().getResource(logoPath))
+                    .getImage().getScaledInstance(100, 50, Image.SCALE_SMOOTH));
+            cardLogoLabel.setIcon(logoIcon);
+        } else {
+            cardLogoLabel.setIcon(null);
+        }
     }
 }
