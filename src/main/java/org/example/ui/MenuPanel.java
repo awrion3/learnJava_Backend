@@ -139,7 +139,7 @@ public class MenuPanel {
                         new MenuItem("Bulgogi Bake", 6000, "images/sandwich/Bulgogi Bake.png"),
                         new MenuItem("Hot Chicken Bake", 6000, "images/sandwich/Hot Chicken Bake.png"),
                         new MenuItem("Carprese Sandwich", 5000, "images/sandwich/Carprese Sandwich.png"),
-                        new MenuItem("Chicken Omelet Sandwich", 5000, "images/sandwich/Chicken Omelet Sandwich.png"),
+                        new MenuItem("Chicken Sandwich", 5000, "images/sandwich/Chicken Omelet Sandwich.png"),
                         new MenuItem("Carprese Salad", 6500, "images/sandwich/Carprese Salad.png"),
                         new MenuItem("Side Salad", 3500, "images/sandwich/Side Salad.png"),
                 };
@@ -184,33 +184,61 @@ public class MenuPanel {
 
     // 주문 내역 패널 레이아웃 설정
     public void addOrder(Order order) {
+        // 주문을 OrderManager에 추가
         orderManager.addOrder(order);
 
+        // 사용자 정의 패널 TwoPanel 사용
         TwoPanel singleOrderPanel = new TwoPanel();
-        singleOrderPanel.setLayout(new BoxLayout(singleOrderPanel, BoxLayout.X_AXIS));
+        singleOrderPanel.setLayout(new GridBagLayout());
+        singleOrderPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
         singleOrderPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Dimension fixedSize = new Dimension(585, 25);
-        singleOrderPanel.setPreferredSize(fixedSize);
-        singleOrderPanel.setMaximumSize(fixedSize);
-        singleOrderPanel.setMinimumSize(fixedSize);
-        TwoLabel orderLabel = new TwoLabel(order.getMenuItem().getName() + "    ");
+        // 가로는 최대 확장하고, 세로는 고정 크기로 설정
+        singleOrderPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40)); // 가로는 최대, 세로는 고정
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 5, 0, 5); // 구성 요소 간의 간격 설정
+
+        // 상품명 레이블 설정
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        TwoLabel orderLabel = new TwoLabel(order.getMenuItem().getName());
+        singleOrderPanel.add(orderLabel, gbc);
+
+        // - 버튼 설정
+        gbc.gridx = 1;
+        gbc.weightx = 0;
         JButton minusButton = new JButton("-");
         styleButton(minusButton);
+        singleOrderPanel.add(minusButton, gbc);
 
+        // 수량 레이블 설정
+        gbc.gridx = 2;
         JLabel quantityLabel = new JLabel(String.valueOf(order.getQuantity()));
         quantityLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        singleOrderPanel.add(quantityLabel, gbc);
 
+        // + 버튼 설정
+        gbc.gridx = 3;
         JButton plusButton = new JButton("+");
         styleButton(plusButton);
+        singleOrderPanel.add(plusButton, gbc);
 
+        // 가격 레이블 설정
+        gbc.gridx = 4;
         TwoLabel priceLabel = new TwoLabel(order.getTotalPrice() + " Won ");
+        priceLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        priceLabel.setPreferredSize(new Dimension(100, 25));
+        singleOrderPanel.add(priceLabel, gbc);
 
+        // 삭제(x) 버튼 설정
+        gbc.gridx = 5;
         JButton deleteButton = new JButton("x");
         styleButton(deleteButton);
+        singleOrderPanel.add(deleteButton, gbc);
 
-        // - 클릭 시 수량 1 감소
+        // 버튼 이벤트 처리
         minusButton.addActionListener(e -> {
             if (order.getQuantity() > 1) {
                 order.decreaseQuantity();
@@ -220,7 +248,6 @@ public class MenuPanel {
             }
         });
 
-        // + 클릭 시 수량 1 감소
         plusButton.addActionListener(e -> {
             order.increaseQuantity();
             quantityLabel.setText(String.valueOf(order.getQuantity()));
@@ -228,7 +255,6 @@ public class MenuPanel {
             updateTotal();
         });
 
-        // x 클릭 시 주문 정보 삭제
         deleteButton.addActionListener(e -> {
             orderPanel.remove(singleOrderPanel);
             orderPanel.revalidate();
@@ -237,14 +263,9 @@ public class MenuPanel {
             updateTotal();
         });
 
-        singleOrderPanel.add(orderLabel);
-        singleOrderPanel.add(minusButton);
-        singleOrderPanel.add(quantityLabel);
-        singleOrderPanel.add(plusButton);
-        singleOrderPanel.add(priceLabel);
-        singleOrderPanel.add(deleteButton);
-
+        // orderPanel에 사용자 정의 패널 추가
         orderPanel.add(singleOrderPanel);
+        orderPanel.setLayout(new BoxLayout(orderPanel, BoxLayout.Y_AXIS)); // 세로로 나열
         orderPanel.revalidate();
         orderPanel.repaint();
         updateTotal();
