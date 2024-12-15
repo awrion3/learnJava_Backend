@@ -27,7 +27,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Maven JAR Plugin: 실행 가능한 JAR 파일을 만들기 위한 설정 -->
+            <!-- Maven JAR Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -35,7 +35,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <!-- 프로그램의 메인 클래스를 지정 -->
+                            <!-- Set Program Main Class -->
                             <mainClass>org.example.Main</mainClass>
                         </manifest>
                     </archive>
