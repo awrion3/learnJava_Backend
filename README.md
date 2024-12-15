@@ -3,7 +3,8 @@
 ---
 
 ### School Toy Project: 
-- Imitating A Twosome Place Cafe Kiosk using Java GUI
+
+* Imitating A Twosome Place Cafe Kiosk using Java GUI
 
 #### I. Background
 
@@ -25,6 +26,7 @@
        ![image](https://github.com/user-attachments/assets/b513ae4b-4429-406d-914b-52938fcf03be)
 
 #### II. Objective
+
 1. Project Implementation Goals
     1) Program provides quick and easy way to order menu for customers
           -	Simple and clean design for customers to order menu items through the kiosk.
@@ -37,8 +39,9 @@
     -	A Twosome Place Cafe in South Korea : https://www.twosome.co.kr/main.do
     -	A Twosome Place Cafe Brand Identity Renewal Website : https://contentformcontext.com/a-twosome-place
 
-3. Project Structure Overview
-  ![image](https://github.com/user-attachments/assets/2e6e7833-ac2d-42a7-8bca-aa744ce20001)
+#### III. Project Structure Overview
+
+![image](https://github.com/user-attachments/assets/2e6e7833-ac2d-42a7-8bca-aa744ce20001)
 
 #### IV. Summary
    - From effective self service ordering to successful store operation and marketing, the kiosk program promotes efficient management and enhances customer experience.
