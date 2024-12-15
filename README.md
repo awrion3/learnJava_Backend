@@ -46,6 +46,8 @@
 #### IV. Summary
    - From effective self service ordering to successful store operation and marketing, the kiosk program promotes efficient management and enhances customer experience.
    - Project Snapshot:
-    ![Screenshot_20241215](https://github.com/user-attachments/assets/b145aaf9-f446-4fed-bfba-ed9230726857)
+   <div align="center">
+       <img src="https://github.com/user-attachments/assets/b145aaf9-f446-4fed-bfba-ed9230726857" alt="Screenshot_20241215_Snapshot" width="500" height="700"/>
+   </div>
 
 ---
